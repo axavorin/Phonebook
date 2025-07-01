@@ -1,18 +1,20 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import personNumbers from './services/PersonsNumbers'
 
-const Person = ({person}) => {
+const Person = ({person, onDelete}) => {
   return (
     <div>
-      {person.name} {person.number}
+      {person.name} {person.number} 
+      <button onClick={onDelete}>delete</button>
     </div>
   )
 }
 
-const PersonList = ({persons}) => {
+const PersonList = ({persons, onDelete}) => {
   return (
     <div>
-      {persons.map((person) => <Person key={person.name} person={person} />)}
+      {persons.map((person) => <Person key={person.name} person={person} onDelete={onDelete(person.id, person.name)} />)}
     </div>
   )
 }
@@ -33,9 +35,9 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personNumbers.getAll()
+      .then(data => {
+        setPersons(data)
       })
   }, [])
 
@@ -55,9 +57,23 @@ const App = () => {
       return
     }
 
-    setPersons(persons.concat({ name: newName, number: newNumber }))
-    setNewName('')
-    setNewNumber('')
+    personNumbers.add({ name: newName, number: newNumber })
+      .then(data => {
+        setPersons(persons.concat(data))
+        setNewName('')
+        setNewNumber('')
+      })
+  }
+
+  const handleDelete = (id, name) => {
+    return () => {
+      if (confirm(`Delete ${name}?`)) {
+        personNumbers.del(id)
+          .then(data => {
+            setPersons(persons.filter(person => person.id != id))
+          })
+      }
+    }
   }
 
   return (
@@ -71,7 +87,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      <PersonList persons={persons} />
+      <PersonList persons={persons} onDelete={handleDelete} />
     </div>
   )
 }
