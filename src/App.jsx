@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import personNumbers from './services/PersonsNumbers'
+import Notification from './components/Notification'
 
 const Person = ({person, onDelete}) => {
   return (
@@ -34,6 +35,9 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
+  const [message, setMessage] = useState(null)
+
+
   useEffect(() => {
     personNumbers.getAll()
       .then(data => {
@@ -62,6 +66,8 @@ const App = () => {
         setPersons(persons.concat(data))
         setNewName('')
         setNewNumber('')
+        setMessage(`${data.name} succesfully added.`)
+        setTimeout(() => setMessage(null), 5000)
       })
   }
 
@@ -80,6 +86,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <form onSubmit={handleAddPerson}>
+        <Notification message={message} />
         <InputField label="name" value={newName} onChange={handleNewName} />
         <InputField label="number" value={newNumber} onChange={handleNewNumber} />
         <div>
