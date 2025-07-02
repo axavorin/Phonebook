@@ -61,12 +61,14 @@ const App = () => {
       return
     }
 
-    personNumbers.add({ name: newName, number: newNumber })
+    const newPerson = { name: newName, number: newNumber }
+
+    personNumbers.add(newPerson)
       .then(data => {
-        setPersons(persons.concat(data))
+        setPersons(persons.concat(newPerson))
         setNewName('')
         setNewNumber('')
-        setMessage(`${data.name} succesfully added.`)
+        setMessage(`${newPerson.name} succesfully added.`)
         setTimeout(() => setMessage(null), 5000)
       })
   }
