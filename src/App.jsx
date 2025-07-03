@@ -65,10 +65,10 @@ const App = () => {
 
     personNumbers.add(newPerson)
       .then(data => {
-        setPersons(persons.concat(newPerson))
+        setPersons(persons.concat(data))
         setNewName('')
         setNewNumber('')
-        setMessage(`${newPerson.name} succesfully added.`)
+        setMessage(`${data.name} succesfully added.`)
         setTimeout(() => setMessage(null), 5000)
       })
   }
